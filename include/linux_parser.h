@@ -46,6 +46,18 @@ long ActiveJiffies();
 long ActiveJiffies(int pid);
 long IdleJiffies();
 
+
+// Memory Types 
+enum MemoryTypes {
+  kTotal_ = 0,
+  kFree_,
+  kBuffer_,
+  kCache_
+
+}; 
+
+
+
 // Processes
 std::string Command(int pid);
 std::string Ram(int pid);
