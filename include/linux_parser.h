@@ -48,15 +48,6 @@ long IdleJiffies();
 float CpuUtilization(int pid);
 
 
-// Memory Types 
-enum MemoryTypes {
-  kTotal_ = 0,
-  kFree_,
-  kBuffer_,
-  kCache_
-
-}; 
-
 
 
 // Processes
