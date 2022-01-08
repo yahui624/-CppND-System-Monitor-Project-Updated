@@ -313,3 +313,39 @@ long LinuxParser::UpTime(int pid) {
 
 
  }
+
+
+float LinuxParser::CpuUtilization(int pid) {
+  string line, val; 
+  long total_time, utime, stime, cutime, cstime, starttime;  
+  float cpu{0.0}; 
+  std::ifstream filestream(kProcDirectory+std::to_string(pid)+kStatusFilename);
+  if (filestream.is_open()) {
+    std::getline(filestream, line);
+    std::istringstream linestream(line);
+    for (int i = 1; i <= 22; ++ i) {
+      linestream >> val;
+      if (i==14) {
+        utime = stoi(val);
+      }
+      if (i==15) {
+        stime = stoi(val);
+      }
+      if (i==16) {
+        cutime = stoi(val);
+      }
+      if (i==17) {
+        cstime = stoi(val);
+      }
+      if (i==22) {
+        starttime = stoi(val);
+      }
+      
+    }
+    total_time = utime + stime + cutime + cstime; 
+    long upTime = LinuxParser::UpTime();
+    long sec = upTime - starttime/sysconf(_SC_CLK_TCK);
+    cpu = (total_time/sysconf(_SC_CLK_TCK)*1.0)/sec; 
+  }
+  return cpu;
+}

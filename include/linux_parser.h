@@ -45,6 +45,7 @@ long Jiffies();
 long ActiveJiffies();
 long ActiveJiffies(int pid);
 long IdleJiffies();
+float CpuUtilization(int pid);
 
 
 // Memory Types 
