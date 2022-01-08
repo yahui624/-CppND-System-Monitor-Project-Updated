@@ -71,28 +71,21 @@ vector<int> LinuxParser::Pids() {
 // TODO: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { 
   // (total_memory - free_memory)/total_memory
-  string line, unit, key;
-  long total, free, cache, buffer, val; 
+  string line, total, free, temp;
 
   vector<long> memory{}; // store memory data for total, free, buffer, cache 
  
   std::ifstream filestream(kProcDirectory+kMeminfoFilename); 
   if (filestream.is_open()) {
-    for (int i =0; i<5; ++i ) {
-      std::getline(filestream, line); 
-      std::istringstream linestream(line); 
-      linestream >> key >> val >> unit; 
-      cout << "IN MemoryUtilization, key is: " << key;
-      memory.push_back(val); 
-    }
+    std::getline(filestream, line); 
+    std::istringstream linestream(line); 
+    linestream >>temp >> total; 
+    cout << "IN MemoryUtilization, key is: " << total;
+    std::getline(filestream, line); 
+    std::istringstream linestream1(line); 
+    linestream1 >>temp >> free; 
   }
-
-  total = memory.at(MemoryTypes::kTotal_);
-  free = memory.at(MemoryTypes::kFree_);
-  buffer = memory.at(MemoryTypes::kBuffer_);
-  cache = memory.at(MemoryTypes::kCache_);
-
-  return (total-free) / total; 
+  return (stof(total) - stof(free))/stof(total); 
 
 }
 
