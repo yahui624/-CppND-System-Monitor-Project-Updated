@@ -80,7 +80,7 @@ float LinuxParser::MemoryUtilization() {
     std::getline(filestream, line); 
     std::istringstream linestream(line); 
     linestream >>temp >> total; 
-    cout << "IN MemoryUtilization, key is: " << total;
+    // cout << "IN MemoryUtilization, key is: " << total;
     std::getline(filestream, line); 
     std::istringstream linestream1(line); 
     linestream1 >>temp >> free; 
@@ -312,14 +312,16 @@ float LinuxParser::CpuUtilization(int pid) {
   string line, val; 
   long total_time, utime, stime, cutime, cstime, starttime;  
   float cpu{0.0}; 
-  std::ifstream filestream(kProcDirectory+std::to_string(pid)+kStatusFilename);
+  std::ifstream filestream(kProcDirectory+std::to_string(pid)+kStatFilename);
   if (filestream.is_open()) {
     std::getline(filestream, line);
     std::istringstream linestream(line);
     for (int i = 1; i <= 22; ++ i) {
       linestream >> val;
+      // cout << " I M STUCK HERE " << val;
       if (i==14) {
         utime = stoi(val);
+        // cout << "UTIME: " << utime;
       }
       if (i==15) {
         stime = stoi(val);
