@@ -31,6 +31,7 @@ string LinuxParser::OperatingSystem() {
         }
       }
     }
+    filestream.close();
   }
   return value;
 }
@@ -60,7 +61,7 @@ vector<int> LinuxParser::Pids() {
       string filename(file->d_name);
       if (std::all_of(filename.begin(), filename.end(), isdigit)) {
         int pid = stoi(filename);
-        pids.push_back(pid);
+        pids.emplace_back(pid);
       }
     }
   }
@@ -84,6 +85,7 @@ float LinuxParser::MemoryUtilization() {
     std::getline(filestream, line); 
     std::istringstream linestream1(line); 
     linestream1 >>temp >> free; 
+    filestream.close();
   }
   return (stof(total) - stof(free))/stof(total); 
 
@@ -98,6 +100,7 @@ long LinuxParser::UpTime() {
     std::getline(filestream, line);
     std::istringstream linestream(line); 
     linestream >> up_time; 
+    filestream.close();
   } 
   return up_time; 
 }
@@ -114,6 +117,7 @@ long LinuxParser::Jiffies() {
     while(linestream >> val) {
       total += val; 
     } 
+    filestream.close();
   } 
   return total; 
 
@@ -135,6 +139,7 @@ long LinuxParser::ActiveJiffies(int pid) {
       linestream >> val; 
       active += val;
     }
+    filestream.close();
   } 
   return active;
  }
@@ -176,8 +181,9 @@ vector<string> LinuxParser::CpuUtilization() {
     std::istringstream linestream(line); 
     linestream >> cpu;
     while (linestream >> val) {
-      Jiffies.push_back(val);
+      Jiffies.emplace_back(val);
     }
+    filestream.close();
   }
   return Jiffies; 
 }
@@ -196,6 +202,7 @@ int LinuxParser::TotalProcesses() {
         }
       }
     }
+    filestream.close();
  }
  return 0; 
 }
@@ -214,6 +221,7 @@ int LinuxParser::RunningProcesses() {
         }
       }
     }
+    filestream.close();
  }
  return 0; 
  }
@@ -230,7 +238,6 @@ string LinuxParser::Command(int pid) {
  }
 
 // TODO: Read and return the memory used by a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Ram(int pid) {
   float val{0.0};
   string line, key;
@@ -239,17 +246,17 @@ string LinuxParser::Ram(int pid) {
     while(std::getline(filestream, line)){ 
       std::stringstream linestream(line);
       while (linestream >> key >> val){
-        if (key == "VmSize:") {
+        if (key == "VmRSS:") { // Use VmRSS instead of VmSize because it gives the exact physical memory being used as a part of Physical RAM. 
           return std::to_string(int(val/1000)); // KB to MB
         }
       }
     }
+    filestream.close();
  }
  return string(); 
 }
 
 // TODO: Read and return the user ID associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Uid(int pid) { 
   string line, key, val{};
   std::ifstream filestream(kProcDirectory+std::to_string(pid)+kStatusFilename);
@@ -262,6 +269,7 @@ string LinuxParser::Uid(int pid) {
         }
       }
     }
+    filestream.close();
  }
  return val; 
 }
@@ -283,6 +291,7 @@ string LinuxParser::User(int pid) {
         }
       }
     }
+    filestream.close();
  }
  return val; 
 }
@@ -300,6 +309,7 @@ long LinuxParser::UpTime(int pid) {
       linestream >> key;
     }
     linestream >> val;
+    filestream.close();
     return val/sysconf(_SC_CLK_TCK); 
  }
  return 0; 
@@ -341,6 +351,7 @@ float LinuxParser::CpuUtilization(int pid) {
     long upTime = LinuxParser::UpTime();
     long sec = upTime - starttime/sysconf(_SC_CLK_TCK);
     cpu = (total_time/sysconf(_SC_CLK_TCK)*1.0)/sec; 
+    filestream.close();
   }
   return cpu;
 }

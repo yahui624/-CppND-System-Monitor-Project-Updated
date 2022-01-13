@@ -9,10 +9,7 @@
 #include "system.h"
 #include "linux_parser.h"
 
-using std::set;
-using std::size_t;
-using std::string;
-using std::vector;
+using namespace std;
 
 // TODO: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
@@ -23,7 +20,7 @@ vector<Process>& System::Processes() {
     processes_.clear();
     for (auto& pid:pids) {
         Process process(pid);
-        processes_.push_back(process); 
+        processes_.emplace_back(process); 
     }
     return processes_; 
 }
