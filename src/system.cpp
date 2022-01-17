@@ -19,9 +19,12 @@ vector<Process>& System::Processes() {
     vector<int> pids = LinuxParser::Pids(); 
     processes_.clear();
     for (auto& pid:pids) {
-        Process process(pid);
-        processes_.emplace_back(process); 
+        processes_.emplace_back(Process(pid)); 
     }
+    // Select processes that only have non-zero metrics 
+    sort(processes_.begin(), processes_.end(), [](Process& a, Process& b){
+        return b.CpuUtilization() < a.CpuUtilization();
+    });
     return processes_; 
 }
 
