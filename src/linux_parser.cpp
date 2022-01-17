@@ -278,22 +278,22 @@ string LinuxParser::Uid(int pid) {
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::User(int pid) { 
   string uid = Uid(pid); 
-  string line, key, val{};
+  string username, pwd, user_id, line; 
+  bool found = false; 
   std::ifstream filestream(kPasswordPath);
   if (filestream.is_open()) {
-    while(std::getline(filestream, line)){ 
+    while(std::getline(filestream, line) && !found){ 
+      std::replace(line.begin(), line.end(), ' ', '_');
       std::replace(line.begin(), line.end(), ':', ' ');
-      std::replace(line.begin(), line.end(), 'x', ' ');
       std::stringstream linestream(line);
-      while (linestream >> key >> val){
-        if (key == uid) {
-          return val; 
-        }
+      linestream >> username >> pwd >> user_id; 
+      if (uid == user_id) {
+        found = true;
       }
     }
     filestream.close();
  }
- return val; 
+ return username; 
 }
 
 // TODO: Read and return the uptime of a process
